@@ -1,59 +1,37 @@
 <?php
-/* Set e-mail recipient */
-$myemail  = "sunnya97@gmail.com";
+    $your_secret = "6LdZQhsTAAAAAN6KVaNjfOLTowpYyyUUSkCJ3NpW";
+    $client_captcha_response = $_POST['g-recaptcha-response'];
+    $user_ip = $_SERVER['REMOTE_ADDR'];
 
-/* Check all form inputs using check_input function */
-$yourname = check_input($_POST['name'], "Enter your name");
-$email    = check_input($_POST['email']);
-$message  = check_input($_POST['message']);
+    $captcha_verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$your_secret&response=$client_captcha_response&remoteip=$user_ip");
+    $captcha_verify_decoded = json_decode($captcha_verify);
+    if(!$captcha_verify_decoded->success)
+      die('DIRTY ROBOT');
 
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
+    $human = $_POST['human'];
+    $from = 'From: CalGreeks Website';
+    $to = 'sunnya97@gmail.com';
+    $subject = 'CalGreeks Contact Form';
 
-/* Let's prepare the message for the e-mail */
-$message = "Hello!
+    $body = "Name: $name \n E-Mail: $email \nMessage:\n$message";
 
-Your contact form has been submitted by:
-
-Name: $yourname
-E-mail: $email
-
-Message:
-$message
-
-End of message
-";
-
-/* Send the message using mail() function */
-mail($myemail, $subject, $message);
-
-/* Redirect visitor to the thank you page */
-header('Location: index.html');
-exit();
-
-/* Functions we used */
-function check_input($data, $problem='')
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    if ($problem && strlen($data) == 0)
-    {
-        show_error($problem);
+	if ($email != '') {
+        if ($human == '4') {                 
+            if (mail ($to, $subject, $body, $from)) { 
+                echo '<p>You have successfully submitted your information to PS4RS. Subscribers to our mailing list will begin to periodically receive updates.</p>';
+            } else { 
+                echo '<p>Something went wrong, go back and try again!</p><p><input type="button" value="Go Back" onclick="history.back(-1)" class="goback" /></p>'; 
+            } 
+        } else if ($_POST['submit'] && $human != '4') {
+            echo '<p>You answered the anti-spam question incorrectly!</p><p><input type="button" value="Go Back" onclick="history.back(-1)" class="goback" /></p>';
+        }
+    } else {
+        echo '<p>You need to fill in all required fields!!</p><p><input type="button" value="Go Back" onclick="history.back(-1)" class="goback" /></p>';
     }
-    return $data;
-}
 
-function show_error($myError)
-{
-?>
-    <html>
-    <body>
-
-    <b>Please correct the following error:</b><br />
-    <?php echo $myError; ?>
-
-    </body>
-    </html>
-<?php
-exit();
-}
+    header("Location: index.html"); /* Redirect browser */
+	exit();
 ?>
