@@ -1,32 +1,59 @@
 <?php
-$field_name = $_POST['name'];
-$field_email = $_POST['email'];
-$field_message = $_POST['message'];
+/* Set e-mail recipient */
+$myemail  = "sunnya97@gmail.com";
 
-$mail_to = 'sunnya97@gmail.com';
-$subject = 'Message from CalGreeks Website Visitor '.$field_name;
+/* Check all form inputs using check_input function */
+$yourname = check_input($_POST['name'], "Enter your name");
+$email    = check_input($_POST['email']);
+$message  = check_input($_POST['message']);
 
-$body_message = 'From: '.$field_name."\n";
-$body_message .= 'E-mail: '.$field_email."\n";
-$body_message .= 'Message: '.$field_message;
 
-$headers = 'From: '.$field_email."\r\n";
-$headers .= 'Reply-To: '.$field_email."\r\n";
+/* Let's prepare the message for the e-mail */
+$message = "Hello!
 
-$mail_status = mail($mail_to, $subject, $body_message, $headers);
+Your contact form has been submitted by:
 
-if ($mail_status) { ?>
-	<script language="javascript" type="text/javascript">
-		alert('Thank you for the message. We will contact you shortly.');
-		window.location = 'index.html';
-	</script>
-<?php
+Name: $yourname
+E-mail: $email
+
+Message:
+$message
+
+End of message
+";
+
+/* Send the message using mail() function */
+mail($myemail, $subject, $message);
+
+/* Redirect visitor to the thank you page */
+header('Location: index.html');
+exit();
+
+/* Functions we used */
+function check_input($data, $problem='')
+{
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    if ($problem && strlen($data) == 0)
+    {
+        show_error($problem);
+    }
+    return $data;
 }
-else { ?>
-	<script language="javascript" type="text/javascript">
-		alert('Message failed. Please, send an email to sunnya97@gmail.com');
-		window.location = 'index.html';
-	</script>
+
+function show_error($myError)
+{
+?>
+    <html>
+    <body>
+
+    <b>Please correct the following error:</b><br />
+    <?php echo $myError; ?>
+
+    </body>
+    </html>
 <?php
+exit();
 }
 ?>
