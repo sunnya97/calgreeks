@@ -3030,7 +3030,7 @@
 /* Banner */
 
 	#banner {
-		padding: 10em 0 4.75em 0 ;
+		padding: 10em 0 4.75em 0;
 	}
 
 		#banner .inner {
@@ -3049,18 +3049,11 @@
 			transform: translateY(0);
 			opacity: 1;
 			margin: 0 0 1.3em 0;
+			width: 100%;
 		}
 
-			#banner .logo .icon {
-				border-radius: 100%;
-				border: solid 2px rgba(255, 255, 255, 0.125);
-				cursor: default;
-				display: inline-block;
-				font-size: 2em;
-				height: 2.25em;
-				line-height: 2.25em;
-				text-align: center;
-				width: 2.25em;
+			#banner .logo img {
+				max-width: 100%;
 			}
 
 		#banner h2 {
